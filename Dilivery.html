@@ -1,0 +1,1868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gourmet Express - Food Delivery</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --primary: #ff6b35;
+            --secondary: #2d3748;
+            --accent: #f56565;
+            --light: #f8f9fa;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f9fafb;
+            color: #2d3748;
+        }
+        
+        .hero-bg {
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1681&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .food-card {
+            transition: all 0.3s ease;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .food-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .input-field {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s;
+        }
+        
+        .input-field:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.2);
+        }
+        
+        .button {
+            background-color: var(--primary);
+            color: white;
+            font-weight: 500;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .button:hover {
+            background-color: #e55a2b;
+            transform: translateY(-2px);
+        }
+        
+        .category-btn {
+            padding: 0.5rem 1.5rem;
+            border-radius: 9999px;
+            border: 1px solid #e2e8f0;
+            background-color: white;
+            color: #4a5568;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .category-btn:hover, .category-btn.active {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .cart-item {
+            transition: all 0.3s;
+        }
+        
+        .cart-item:hover {
+            background-color: #f7fafc;
+        }
+        
+        .menu-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .login-container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .signup-container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .footer-wrapper {
+            background-color: var(--secondary);
+            color: white;
+            padding: 2rem 0;
+        }
+        
+        .mobile-menu {
+            transition: all 0.3s ease;
+        }
+        
+        .order-summary {
+            background-color: #f8f9fa;
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+        
+        .tab-button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-weight: 500;
+            color: #718096;
+            border-bottom: 2px solid transparent;
+        }
+        
+        .tab-button.active {
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary);
+        }
+        
+        .restaurant-card {
+            transition: all 0.3s;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .restaurant-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .loading-spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            background-color: var(--secondary);
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+        
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .payment-method {
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .payment-method:hover, .payment-method.selected {
+            border-color: var(--primary);
+            background-color: #fff5f0;
+        }
+        
+        .order-success {
+            text-align: center;
+            padding: 3rem;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .progress-bar {
+            height: 6px;
+            background-color: #e2e8f0;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        
+        .progress-bar-fill {
+            height: 100%;
+            background-color: var(--primary);
+            transition: width 0.5s ease;
+        }
+        
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+        
+        .step {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background-color: #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            z-index: 2;
+        }
+        
+        .step.active {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .step.completed {
+            background-color: #48bb78;
+            color: white;
+        }
+        
+        .step-label {
+            position: absolute;
+            top: 40px;
+            font-size: 0.75rem;
+            color: #718096;
+            text-align: center;
+            width: 100px;
+            left: -30px;
+        }
+        
+        .step-connector {
+            position: absolute;
+            height: 2px;
+            background-color: #e2e8f0;
+            top: 17px;
+            left: 0;
+            right: 0;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Component -->
+    <header class="sticky top-0 z-50 bg-white shadow-md" id="header">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <!-- Logo -->
+            <a href="#" class="flex items-center space-x-2">
+                <img
+                    class="w-12 h-12 md:w-16 md:h-16 object-contain"
+                    src="https://static.vecteezy.com/system/resources/thumbnails/019/796/973/small_2x/motorbike-delivery-man-logo-icon-symbol-template-free-vector.jpg"
+                    alt="Restaurant Logo"
+                />
+                <span class="text-xl font-bold text-gray-800">Gourmet Express</span>
+            </a>
+
+            <!-- Desktop Navigation -->
+            <nav class="hidden md:flex space-x-8 items-center">
+                <a href="#" class="text-gray-600 hover:text-orange-500 transition-colors font-medium nav-link" data-page="home">Home</a>
+                <a href="#menu" class="text-gray-600 hover:text-orange-500 transition-colors font-medium nav-link" data-page="menu">Menu</a>
+                <a href="#restaurants" class="text-gray-600 hover:text-orange-500 transition-colors font-medium nav-link" data-page="restaurants">Restaurants</a>
+                
+                <div id="auth-buttons" class="flex space-x-4">
+                    <a href="#login" class="text-gray-600 hover:text-orange-500 transition-colors font-medium nav-link" data-page="login">Login / Sign Up</a>
+                </div>
+                
+                <a href="#profile" class="text-gray-600 hover:text-orange-500 transition-colors font-medium nav-link hidden" data-page="profile" id="profile-link">Profile</a>
+                
+                <a href="#cart" class="text-gray-600 hover:text-orange-500 transition-colors font-medium flex items-center" data-page="cart">
+                    <i class="fas fa-shopping-cart mr-1"></i>
+                    <span id="cart-count">0</span>
+                </a>
+                
+                <button id="logout-button" class="text-gray-600 hover:text-orange-500 transition-colors font-medium hidden">
+                    Logout
+                </button>
+            </nav>
+
+            <!-- Mobile Menu Button -->
+            <button class="md:hidden p-2 rounded-md text-gray-600 hover:bg-gray-100 focus:outline-none" id="mobile-menu-button">
+                <i class="fas fa-bars text-xl"></i>
+            </button>
+        </div>
+
+        <!-- Mobile Navigation -->
+        <div class="mobile-menu hidden bg-white border-t border-gray-200 py-2" id="mobile-menu">
+            <div class="container mx-auto px-4 flex flex-col space-y-3">
+                <a href="#" class="py-2 text-gray-600 hover:text-orange-500 font-medium nav-link" data-page="home">Home</a>
+                <a href="#menu" class="py-2 text-gray-600 hover:text-orange-500 font-medium nav-link" data-page="menu">Menu</a>
+                <a href="#restaurants" class="py-2 text-gray-600 hover:text-orange-500 font-medium nav-link" data-page="restaurants">Restaurants</a>
+                
+                <div id="mobile-auth-buttons">
+                    <a href="#login" class="py-2 text-gray-600 hover:text-orange-500 font-medium nav-link" data-page="login">Login / Sign Up</a>
+                </div>
+                
+                <a href="#profile" class="py-2 text-gray-600 hover:text-orange-500 font-medium nav-link hidden" data-page="profile" id="mobile-profile-link">Profile</a>
+                
+                <a href="#cart" class="py-2 text-gray-600 hover:text-orange-500 font-medium flex items-center nav-link" data-page="cart">
+                    <i class="fas fa-shopping-cart mr-2"></i>
+                    Cart (<span id="mobile-cart-count">0</span>)
+                </a>
+                
+                <button id="mobile-logout-button" class="py-2 text-gray-600 hover:text-orange-500 font-medium text-left hidden">
+                    Logout
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Home Page -->
+        <div id="home-page" class="page">
+            <!-- Hero Section -->
+            <section class="hero-bg text-white py-20 md:py-32 rounded-xl mb-16">
+                <div class="container mx-auto px-4 text-center">
+                    <h1 class="text-4xl md:text-6xl font-bold mb-6">Delicious food delivered fast</h1>
+                    <p class="text-xl mb-10 max-w-2xl mx-auto">From local favorites to restaurant classics, we have something for every taste</p>
+                    <button class="button bg-white text-orange-500 hover:bg-gray-100 text-lg px-8 py-4" id="order-now-btn">Order Now</button>
+                </div>
+            </section>
+
+            <!-- How it Works Section -->
+            <section class="py-16 bg-white rounded-xl mb-16">
+                <div class="container mx-auto px-4">
+                    <h2 class="text-3xl font-bold text-center mb-12">How It Works</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div class="text-center p-6">
+                            <div class="w-20 h-20 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                                <i class="fas fa-utensils text-orange-500 text-3xl"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-3">Choose Your Food</h3>
+                            <p class="text-gray-600">Browse hundreds of restaurants and dishes to find what you crave</p>
+                        </div>
+                        <div class="text-center p-6">
+                            <div class="w-20 h-20 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                                <i class="fas fa-credit-card text-orange-500 text-3xl"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-3">Pay Online</h3>
+                            <p class="text-gray-600">Use our secure payment system to complete your order quickly</p>
+                        </div>
+                        <div class="text-center p-6">
+                            <div class="w-20 h-20 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                                <i class="fas fa-truck text-orange-500 text-3xl"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-3">Fast Delivery</h3>
+                            <p class="text-gray-600">Track your order in real-time as we deliver it to your doorstep</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Featured Restaurants -->
+            <section class="mb-16">
+                <h2 class="text-3xl font-bold text-center mb-12">Featured Restaurants</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="restaurant-card bg-white rounded-xl shadow-md overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" 
+                             alt="Italian Bistro" class="w-full h-48 object-cover">
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="text-xl font-semibold">Italian Bistro</h3>
+                                <span class="flex items-center text-yellow-500">
+                                    <i class="fas fa-star mr-1"></i>
+                                    4.8
+                                </span>
+                            </div>
+                            <p class="text-gray-600 mb-4">Authentic Italian cuisine with a modern twist</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-500"><i class="fas fa-clock mr-1"></i> 25-35 min</span>
+                                <span class="text-gray-500"><i class="fas fa-dollar-sign mr-1"></i> $$</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="restaurant-card bg-white rounded-xl shadow-md overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1552566626-52f8b828add9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" 
+                             alt="Burger Kingdom" class="w-full h-48 object-cover">
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="text-xl font-semibold">Burger Kingdom</h3>
+                                <span class="flex items-center text-yellow-500">
+                                    <i class="fas fa-star mr-1"></i>
+                                    4.6
+                                </span>
+                            </div>
+                            <p class="text-gray-600 mb-4">Gourmet burgers and crispy fries</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-500"><i class="fas fa-clock mr-1"></i> 20-30 min</span>
+                                <span class="text-gray-500"><i class="fas fa-dollar-sign mr-1"></i> $</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="restaurant-card bg-white rounded-xl shadow-md overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1517244683847-7456b63c5969?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" 
+                             alt="Sushi Place" class="w-full h-48 object-cover">
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="text-xl font-semibold">Sushi Place</h3>
+                                <span class="flex items-center text-yellow-500">
+                                    <i class="fas fa-star mr-1"></i>
+                                    4.9
+                                </span>
+                            </div>
+                            <p class="text-gray-600 mb-4">Fresh sushi and Japanese specialties</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-500"><i class="fas fa-clock mr-1"></i> 30-40 min</span>
+                                <span class="text-gray-500"><i class="fas fa-dollar-sign mr-1"></i> $$$</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Menu Page -->
+        <div id="menu-page" class="page hidden">
+            <h2 class="text-3xl font-bold text-center mb-6">Our Menu</h2>
+            <p class="text-gray-600 text-center mb-12 max-w-2xl mx-auto">Discover our most popular dishes that customers love to order again and again</p>
+            
+            <!-- Category Filters -->
+            <div class="flex flex-wrap justify-center gap-4 mb-12">
+                <button class="category-btn active" data-category="all">All</button>
+                <button class="category-btn" data-category="pizza">Pizza</button>
+                <button class="category-btn" data-category="burgers">Burgers</button>
+                <button class="category-btn" data-category="sushi">Sushi</button>
+                <button class="category-btn" data-category="salads">Salads</button>
+                <button class="category-btn" data-category="desserts">Desserts</button>
+            </div>
+            
+            <!-- Food Items Grid -->
+            <div class="menu-container">
+                <!-- Food items will be loaded dynamically -->
+            </div>
+        </div>
+
+        <!-- Restaurants Page -->
+        <div id="restaurants-page" class="page hidden">
+            <h2 class="text-3xl font-bold text-center mb-12">Our Restaurants</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Restaurants will be loaded dynamically -->
+            </div>
+        </div>
+
+        <!-- Login Page -->
+        <div id="login-page" class="page hidden">
+            <div class="login-container">
+                <h2 class="text-2xl font-bold text-center mb-8">Login to Your Account</h2>
+                
+                <!-- Login Form -->
+                <form id="login-form">
+                    <div class="mb-4">
+                        <input
+                            type="email"
+                            placeholder="Enter Email ID"
+                            class="input-field"
+                            id="login-email"
+                            required
+                        />
+                    </div>
+
+                    <div class="mb-6">
+                        <input
+                            type="password"
+                            placeholder="Enter Password"
+                            class="input-field"
+                            id="login-password"
+                            required
+                        />
+                    </div>
+
+                    <div class="mb-6">
+                        <button type="submit" class="button w-full">Login</button>
+                    </div>
+                    
+                    <div class="text-center">
+                        <a href="#" class="text-orange-500 hover:underline" id="forgot-password">Forgot Password?</a>
+                    </div>
+                </form>
+                
+                <div class="relative flex items-center justify-center my-8">
+                    <div class="border-t border-gray-300 w-full"></div>
+                    <span class="bg-white px-3 text-gray-500">Or</span>
+                    <div class="border-t border-gray-300 w-full"></div>
+                </div>
+                
+                <!-- Signup Link -->
+                <div class="text-center">
+                    <p class="text-gray-600">Don't have an account? <a href="#" class="text-orange-500 hover:underline" id="show-signup">Sign Up</a></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Signup Page -->
+        <div id="signup-page" class="page hidden">
+            <div class="signup-container">
+                <h2 class="text-2xl font-bold text-center mb-8">Create New Account</h2>
+                
+                <form id="signup-form">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <input
+                                type="text"
+                                placeholder="First Name"
+                                class="input-field"
+                                id="first-name"
+                                required
+                            />
+                        </div>
+                        <div>
+                            <input
+                                type="text"
+                                placeholder="Last Name"
+                                class="input-field"
+                                id="last-name"
+                                required
+                            />
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <input
+                            type="email"
+                            placeholder="Enter Email ID"
+                            class="input-field"
+                            id="signup-email"
+                            required
+                        />
+                    </div>
+
+                    <div class="mb-4">
+                        <input
+                            type="password"
+                            placeholder="Enter Password"
+                            class="input-field"
+                            id="signup-password"
+                            required
+                        />
+                    </div>
+
+                    <div class="mb-4">
+                        <input
+                            type="password"
+                            placeholder="Confirm Password"
+                            class="input-field"
+                            id="confirm-password"
+                            required
+                        />
+                    </div>
+
+                    <div class="mb-4">
+                        <input
+                            type="text"
+                            placeholder="Enter Restaurant Name"
+                            class="input-field"
+                            id="restaurant-name"
+                            required
+                        />
+                    </div>
+
+                    <div class="mb-4">
+                        <input
+                            type="text"
+                            placeholder="Enter City"
+                            class="input-field"
+                            id="city"
+                            required
+                        />
+                    </div>
+
+                    <div class="mb-4">
+                        <input
+                            type="text"
+                            placeholder="Enter Full Address"
+                            class="input-field"
+                            id="address"
+                            required
+                        />
+                    </div>
+
+                    <div class="mb-6">
+                        <input
+                            type="tel"
+                            placeholder="Enter Contact No."
+                            class="input-field"
+                            id="phone"
+                            required
+                        />
+                    </div>
+
+                    <div class="mb-6">
+                        <button type="submit" class="button w-full">Sign Up</button>
+                    </div>
+                </form>
+                
+                <div class="text-center">
+                    <p class="text-gray-600">Already have an account? <a href="#" class="text-orange-500 hover:underline" id="show-login">Login</a></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Page -->
+        <div id="profile-page" class="page hidden">
+            <h2 class="text-3xl font-bold text-center mb-12">Your Profile</h2>
+            
+            <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
+                <div class="p-8">
+                    <div class="flex items-center mb-8">
+                        <div class="w-24 h-24 bg-orange-100 rounded-full flex items-center justify-center mr-6">
+                            <i class="fas fa-user text-orange-500 text-4xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-semibold" id="profile-name">User Name</h3>
+                            <p class="text-gray-600" id="profile-email">user@example.com</p>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        <div>
+                            <h4 class="text-lg font-semibold mb-2">Contact Information</h4>
+                            <p class="text-gray-600" id="profile-phone">+1 (123) 456-7890</p>
+                            <p class="text-gray-600" id="profile-address">123 Main St, City, State</p>
+                        </div>
+                        
+                        <div>
+                            <h4 class="text-lg font-semibold mb-2">Restaurant Information</h4>
+                            <p class="text-gray-600" id="profile-restaurant">Restaurant Name</p>
+                            <p class="text-gray-600" id="profile-city">City, State</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between">
+                        <button class="button bg-gray-600 hover:bg-gray-700">Edit Profile</button>
+                        <button class="button bg-red-600 hover:bg-red-700" id="profile-logout">Logout</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Order History -->
+            <div class="mt-16">
+                <h3 class="text-2xl font-semibold mb-6">Order History</h3>
+                
+                <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                    <div class="p-6 border-b border-gray-200">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h4 class="font-semibold">Order #12345</h4>
+                                <p class="text-gray-600">June 12, 2023</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="font-semibold">$42.50</p>
+                                <p class="text-green-600">Delivered</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="p-6 border-b border-gray-200">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h4 class="font-semibold">Order #12344</h4>
+                                <p class="text-gray-600">June 10, 2023</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="font-semibold">$35.75</p>
+                                <p class="text-green-600">Delivered</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="p-6">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h4 class="font-semibold">Order #12343</h4>
+                                <p class="text-gray-600">June 8, 2023</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="font-semibold">$28.90</p>
+                                <p class="text-green-600">Delivered</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cart Page -->
+        <div id="cart-page" class="page hidden">
+            <h2 class="text-3xl font-bold text-center mb-12">Your Cart</h2>
+            
+            <div class="flex flex-col lg:flex-row gap-8">
+                <div class="w-full lg:w-2/3">
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                        <div class="p-6 border-b border-gray-200">
+                            <h3 class="text-xl font-semibold">Cart Items</h3>
+                        </div>
+                        
+                        <div id="cart-items">
+                            <!-- Cart items will be loaded dynamically -->
+                            <div class="p-6 text-center text-gray-500">
+                                <i class="fas fa-shopping-cart text-4xl mb-4"></i>
+                                <p>Your cart is empty</p>
+                                <button class="button mt-4" id="empty-cart-button">Browse Menu</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="w-full lg:w-1/3">
+                    <div class="order-summary sticky top-24">
+                        <h3 class="text-xl font-semibold mb-4">Order Summary</h3>
+                        
+                        <div class="flex justify-between mb-2">
+                            <span class="text-gray-600">Subtotal</span>
+                            <span id="cart-subtotal">$0.00</span>
+                        </div>
+                        
+                        <div class="flex justify-between mb-2">
+                            <span class="text-gray-600">Delivery Fee</span>
+                            <span id="delivery-fee">$2.99</span>
+                        </div>
+                        
+                        <div class="flex justify-between mb-2">
+                            <span class="text-gray-600">Tax</span>
+                            <span id="tax-amount">$0.00</span>
+                        </div>
+                        
+                        <div class="border-t border-gray-300 my-4 pt-4 flex justify-between font-semibold text-lg">
+                            <span>Total</span>
+                            <span id="cart-total">$0.00</span>
+                        </div>
+                        
+                        <button class="button w-full mt-4" id="checkout-button" disabled>Proceed to Checkout</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Checkout Page -->
+        <div id="checkout-page" class="page hidden">
+            <h2 class="text-3xl font-bold text-center mb-12">Checkout</h2>
+            
+            <div class="max-w-4xl mx-auto">
+                <!-- Progress Bar -->
+                <div class="step-indicator mb-12">
+                    <div class="step-connector"></div>
+                    <div class="step active" id="step-1">
+                        1
+                        <div class="step-label">Cart</div>
+                    </div>
+                    <div class="step" id="step-2">
+                        2
+                        <div class="step-label">Information</div>
+                    </div>
+                    <div class="step" id="step-3">
+                        3
+                        <div class="step-label">Payment</div>
+                    </div>
+                    <div class="step" id="step-4">
+                        4
+                        <div class="step-label">Confirmation</div>
+                    </div>
+                </div>
+                
+                <!-- Checkout Steps -->
+                <div id="checkout-steps">
+                    <!-- Step 1: Cart Review -->
+                    <div id="checkout-step-1" class="checkout-step">
+                        <div class="bg-white rounded-xl shadow-md overflow-hidden mb-8">
+                            <div class="p-6 border-b border-gray-200">
+                                <h3 class="text-xl font-semibold">Review Your Order</h3>
+                            </div>
+                            <div id="checkout-items" class="p-6">
+                                <!-- Checkout items will be loaded dynamically -->
+                            </div>
+                            <div class="p-6 border-t border-gray-200">
+                                <div class="flex justify-between font-semibold text-lg">
+                                    <span>Total</span>
+                                    <span id="checkout-total">$0.00</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between">
+                            <button class="button bg-gray-600 hover:bg-gray-700" id="back-to-cart">Back to Cart</button>
+                            <button class="button" id="continue-to-info">Continue to Information</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 2: Delivery Information -->
+                    <div id="checkout-step-2" class="checkout-step hidden">
+                        <div class="bg-white rounded-xl shadow-md overflow-hidden mb-8">
+                            <div class="p-6 border-b border-gray-200">
+                                <h3 class="text-xl font-semibold">Delivery Information</h3>
+                            </div>
+                            <div class="p-6">
+                                <form id="delivery-form">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                        <div>
+                                            <label class="block text-gray-700 mb-2">First Name</label>
+                                            <input type="text" class="input-field" required>
+                                        </div>
+                                        <div>
+                                            <label class="block text-gray-700 mb-2">Last Name</label>
+                                            <input type="text" class="input-field" required>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-4">
+                                        <label class="block text-gray-700 mb-2">Email Address</label>
+                                        <input type="email" class="input-field" required>
+                                    </div>
+                                    
+                                    <div class="mb-4">
+                                        <label class="block text-gray-700 mb-2">Phone Number</label>
+                                        <input type="tel" class="input-field" required>
+                                    </div>
+                                    
+                                    <div class="mb-4">
+                                        <label class="block text-gray-700 mb-2">Delivery Address</label>
+                                        <input type="text" class="input-field" placeholder="Street address" required>
+                                    </div>
+                                    
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                                        <div>
+                                            <label class="block text-gray-700 mb-2">City</label>
+                                            <input type="text" class="input-field" required>
+                                        </div>
+                                        <div>
+                                            <label class="block text-gray-700 mb-2">State</label>
+                                            <input type="text" class="input-field" required>
+                                        </div>
+                                        <div>
+                                            <label class="block text-gray-700 mb-2">ZIP Code</label>
+                                            <input type="text" class="input-field" required>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-4">
+                                        <label class="block text-gray-700 mb-2">Delivery Instructions (Optional)</label>
+                                        <textarea class="input-field" rows="3" placeholder="Any specific instructions for delivery?"></textarea>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between">
+                            <button class="button bg-gray-600 hover:bg-gray-700" id="back-to-cart-review">Back</button>
+                            <button class="button" id="continue-to-payment">Continue to Payment</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 3: Payment -->
+                    <div id="checkout-step-3" class="checkout-step hidden">
+                        <div class="bg-white rounded-xl shadow-md overflow-hidden mb-8">
+                            <div class="p-6 border-b border-gray-200">
+                                <h3 class="text-xl font-semibold">Payment Method</h3>
+                            </div>
+                            <div class="p-6">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                                    <div class="payment-method selected" data-method="credit-card">
+                                        <div class="flex items-center">
+                                            <i class="fas fa-credit-card text-2xl mr-3 text-orange-500"></i>
+                                            <div>
+                                                <h4 class="font-semibold">Credit Card</h4>
+                                                <p class="text-gray-600 text-sm">Pay securely with credit card</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="payment-method" data-method="paypal">
+                                        <div class="flex items-center">
+                                            <i class="fab fa-paypal text-2xl mr-3 text-blue-500"></i>
+                                            <div>
+                                                <h4 class="font-semibold">PayPal</h4>
+                                                <p class="text-gray-600 text-sm">Pay with your PayPal account</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div id="credit-card-form">
+                                    <div class="mb-4">
+                                        <label class="block text-gray-700 mb-2">Card Number</label>
+                                        <input type="text" class="input-field" placeholder="1234 5678 9012 3456" required>
+                                    </div>
+                                    
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                        <div>
+                                            <label class="block text-gray-700 mb-2">Expiration Date</label>
+                                            <input type="text" class="input-field" placeholder="MM/YY" required>
+                                        </div>
+                                        <div>
+                                            <label class="block text-gray-700 mb-2">CVV</label>
+                                            <input type="text" class="input-field" placeholder="123" required>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-4">
+                                        <label class="block text-gray-700 mb-2">Cardholder Name</label>
+                                        <input type="text" class="input-field" required>
+                                    </div>
+                                </div>
+                                
+                                <div id="paypal-form" class="hidden">
+                                    <div class="bg-blue-50 p-4 rounded-lg text-center">
+                                        <p class="text-blue-800">You will be redirected to PayPal to complete your payment</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between">
+                            <button class="button bg-gray-600 hover:bg-gray-700" id="back-to-info">Back</button>
+                            <button class="button" id="complete-order">Complete Order</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 4: Confirmation -->
+                    <div id="checkout-step-4" class="checkout-step hidden">
+                        <div class="order-success">
+                            <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                                <i class="fas fa-check text-green-500 text-3xl"></i>
+                            </div>
+                            <h3 class="text-2xl font-semibold mb-4">Order Confirmed!</h3>
+                            <p class="text-gray-600 mb-6">Your order has been successfully placed</p>
+                            <div class="bg-gray-50 p-4 rounded-lg mb-6">
+                                <p class="font-semibold">Order #: <span class="text-orange-500">ORD-789456</span></p>
+                                <p class="text-gray-600">Estimated delivery time: <span class="font-semibold">35-45 minutes</span></p>
+                            </div>
+                            <p class="text-gray-600 mb-6">A confirmation email has been sent to your email address</p>
+                            <button class="button" id="back-to-home">Back to Home</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer Component -->
+    <footer class="footer-wrapper mt-16">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">Gourmet Express</h3>
+                    <p class="text-gray-400">Delivering delicious meals to your doorstep with speed and care.</p>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition nav-link" data-page="home">Home</a></li>
+                        <li><a href="#menu" class="text-gray-400 hover:text-white transition nav-link" data-page="menu">Menu</a></li>
+                        <li><a href="#restaurants" class="text-gray-400 hover:text-white transition nav-link" data-page="restaurants">Restaurants</a></li>
+                        <li><a href="#login" class="text-gray-400 hover:text-white transition nav-link" data-page="login">Login/Signup</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Contact Us</h3>
+                    <ul class="space-y-2">
+                        <li class="text-gray-400"><i class="fas fa-map-marker-alt mr-2"></i> 123 Food Street, City</li>
+                        <li class="text-gray-400"><i class="fas fa-phone mr-2"></i> (123) 456-7890</li>
+                        <li class="text-gray-400"><i class="fas fa-envelope mr-2"></i> info@gourmetexpress.com</li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Follow Us</h3>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-facebook-f text-xl"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-twitter text-xl"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-instagram text-xl"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-linkedin-in text-xl"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 mt-8 pt-6 text-center">
+                <p class="text-gray-400">© 2023 Gourmet Express. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <div class="flex items-center">
+            <i class="fas fa-check-circle mr-2 text-green-400"></i>
+            <span id="toast-message">Item added to cart</span>
+        </div>
+    </div>
+
+    <script>
+        // App Data
+        const appData = {
+            currentUser: null,
+            cart: [],
+            restaurants: [
+                {
+                    id: 1,
+                    name: "Italian Bistro",
+                    image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80",
+                    rating: 4.8,
+                    description: "Authentic Italian cuisine with a modern twist",
+                    deliveryTime: "25-35 min",
+                    priceRange: "$$"
+                },
+                {
+                    id: 2,
+                    name: "Burger Kingdom",
+                    image: "https://images.unsplash.com/photo-1552566626-52f8b828add9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80",
+                    rating: 4.6,
+                    description: "Gourmet burgers and crispy fries",
+                    deliveryTime: "20-30 min",
+                    priceRange: "$"
+                },
+                {
+                    id: 3,
+                    name: "Sushi Place",
+                    image: "https://images.unsplash.com/photo-1517244683847-7456b63c5969?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80",
+                    rating: 4.9,
+                    description: "Fresh sushi and Japanese specialties",
+                    deliveryTime: "30-40 min",
+                    priceRange: "$$$"
+                },
+                {
+                    id: 4,
+                    name: "Green Leaf Salad Bar",
+                    image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80",
+                    rating: 4.5,
+                    description: "Healthy salads and bowls",
+                    deliveryTime: "15-25 min",
+                    priceRange: "$$"
+                },
+                {
+                    id: 5,
+                    name: "Sweet Tooth Bakery",
+                    image: "https://images.unsplash.com/photo-1555507036-ab794f24d8c7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80",
+                    rating: 4.7,
+                    description: "Delicious desserts and pastries",
+                    deliveryTime: "20-30 min",
+                    priceRange: "$"
+                },
+                {
+                    id: 6,
+                    name: "Taco Fiesta",
+                    image: "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1080&q=80",
+                    rating: 4.4,
+                    description: "Authentic Mexican street food",
+                    deliveryTime: "25-35 min",
+                    priceRange: "$$"
+                }
+            ],
+            menuItems: [
+                {
+                    id: 1,
+                    name: "Margherita Pizza",
+                    price: 12.99,
+                    image: "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1080&q=80",
+                    description: "Classic pizza with tomato sauce, mozzarella, and fresh basil",
+                    category: "pizza",
+                    restaurantId: 1
+                },
+                {
+                    id: 2,
+                    name: "Pepperoni Pizza",
+                    price: 14.99,
+                    image: "https://images.unsplash.com/photo-1628840042765-356cda07504e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1080&q=80",
+                    description: "Classic pizza with tomato sauce, mozzarella, and pepperoni",
+                    category: "pizza",
+                    restaurantId: 1
+                },
+                {
+                    id: 3,
+                    name: "Classic Burger",
+                    price: 9.99,
+                    image: "https://images.unsplash.com/photo-1551782450-a2132b4ba21d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1080&q=80",
+                    description: "Beef patty with cheese, lettuce, tomato, and special sauce",
+                    category: "burgers",
+                    restaurantId: 2
+                },
+                {
+                    id: 4,
+                    name: "Bacon Cheeseburger",
+                    price: 11.99,
+                    image: "https://images.unsplash.com/photo-1553979459-d2229ba7433b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1080&q=80",
+                    description: "Beef patty with bacon, cheese, lettuce, and special sauce",
+                    category: "burgers",
+                    restaurantId: 2
+                },
+                {
+                    id: 5,
+                    name: "California Rolls",
+                    price: 14.99,
+                    image: "https://images.unsplash.com/photo-1611143669185-af224c5e3252?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1080&q=80",
+                    description: "8 pieces of crab, avocado and cucumber rolls",
+                    category: "sushi",
+                    restaurantId: 3
+                },
+                {
+                    id: 6,
+                    name: "Salmon Nigiri",
+                    price: 16.99,
+                    image: "https://images.unsplash.com/photo-1617196034796-73dfa7e1f3e3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1080&q=80",
+                    description: "6 pieces of fresh salmon on rice",
+                    category: "sushi",
+                    restaurantId: 3
+                },
+                {
+                    id: 7,
+                    name: "Caesar Salad",
+                    price: 8.99,
+                    image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1080&q=80",
+                    description: "Fresh romaine lettuce with Caesar dressing, croutons, and parmesan",
+                    category: "salads",
+                    restaurantId: 4
+                },
+                {
+                    id: 8,
+                    name: "Greek Salad",
+                    price: 9.99,
+                    image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1080&q=80",
+                    description: "Fresh vegetables with feta cheese and olive oil",
+                    category: "salads",
+                    restaurantId: 4
+                },
+                {
+                    id: 9,
+                    name: "Chocolate Cake",
+                    price: 6.99,
+                    image: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1080&q=80",
+                    description: "Rich chocolate cake with chocolate frosting",
+                    category: "desserts",
+                    restaurantId: 5
+                },
+                {
+                    id: 10,
+                    name: "Cheesecake",
+                    price: 7.99,
+                    image: "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1080&q=80",
+                    description: "Creamy cheesecake with graham cracker crust",
+                    category: "desserts",
+                    restaurantId: 5
+                }
+            ],
+            currentCheckoutStep: 1,
+            paymentMethod: 'credit-card'
+        };
+
+        // DOM Elements
+        const elements = {
+            mobileMenuButton: document.getElementById('mobile-menu-button'),
+            mobileMenu: document.getElementById('mobile-menu'),
+            pages: document.querySelectorAll('.page'),
+            navLinks: document.querySelectorAll('.nav-link'),
+            categoryButtons: document.querySelectorAll('.category-btn'),
+            menuContainer: document.querySelector('.menu-container'),
+            restaurantsContainer: document.querySelector('#restaurants-page > .grid'),
+            cartItems: document.getElementById('cart-items'),
+            cartCount: document.getElementById('cart-count'),
+            mobileCartCount: document.getElementById('mobile-cart-count'),
+            cartSubtotal: document.getElementById('cart-subtotal'),
+            cartTotal: document.getElementById('cart-total'),
+            taxAmount: document.getElementById('tax-amount'),
+            checkoutButton: document.getElementById('checkout-button'),
+            loginForm: document.getElementById('login-form'),
+            signupForm: document.getElementById('signup-form'),
+            showSignup: document.getElementById('show-signup'),
+            showLogin: document.getElementById('show-login'),
+            toast: document.getElementById('toast'),
+            toastMessage: document.getElementById('toast-message'),
+            authButtons: document.getElementById('auth-buttons'),
+            profileLink: document.getElementById('profile-link'),
+            logoutButton: document.getElementById('logout-button'),
+            mobileAuthButtons: document.getElementById('mobile-auth-buttons'),
+            mobileProfileLink: document.getElementById('mobile-profile-link'),
+            mobileLogoutButton: document.getElementById('mobile-logout-button'),
+            profileLogout: document.getElementById('profile-logout'),
+            emptyCartButton: document.getElementById('empty-cart-button'),
+            checkoutItems: document.getElementById('checkout-items'),
+            checkoutTotal: document.getElementById('checkout-total'),
+            checkoutSteps: document.querySelectorAll('.checkout-step'),
+            paymentMethods: document.querySelectorAll('.payment-method')
+        };
+
+        // Initialize the app
+        function initApp() {
+            // Load menu items
+            loadMenuItems();
+            
+            // Load restaurants
+            loadRestaurants();
+            
+            // Update cart
+            updateCart();
+            
+            // Check if user is logged in
+            checkAuthStatus();
+            
+            // Set up event listeners
+            setupEventListeners();
+        }
+
+        // Set up event listeners
+        function setupEventListeners() {
+            // Mobile menu toggle
+            elements.mobileMenuButton.addEventListener('click', toggleMobileMenu);
+            
+            // Navigation
+            elements.navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const page = link.getAttribute('data-page');
+                    showPage(page);
+                    
+                    // Close mobile menu after navigation
+                    if (elements.mobileMenu.classList.contains('hidden') === false) {
+                        toggleMobileMenu();
+                    }
+                });
+            });
+            
+            // Category filters
+            elements.categoryButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    // Remove active class from all buttons
+                    elements.categoryButtons.forEach(btn => btn.classList.remove('active'));
+                    
+                    // Add active class to clicked button
+                    button.classList.add('active');
+                    
+                    // Filter menu items
+                    const category = button.getAttribute('data-category');
+                    loadMenuItems(category);
+                });
+            });
+            
+            // Order now button
+            document.getElementById('order-now-btn').addEventListener('click', () => {
+                showPage('menu');
+            });
+            
+            // Login form
+            elements.loginForm.addEventListener('submit', handleLogin);
+            
+            // Signup form
+            elements.signupForm.addEventListener('submit', handleSignup);
+            
+            // Show signup form
+            elements.showSignup.addEventListener('click', (e) => {
+                e.preventDefault();
+                showPage('signup');
+            });
+            
+            // Show login form
+            elements.showLogin.addEventListener('click', (e) => {
+                e.preventDefault();
+                showPage('login');
+            });
+            
+            // Forgot password
+            document.getElementById('forgot-password').addEventListener('click', (e) => {
+                e.preventDefault();
+                showToast('Password reset instructions sent to your email');
+            });
+            
+            // Checkout button
+            elements.checkoutButton.addEventListener('click', () => {
+                if (appData.cart.length === 0) {
+                    showToast('Your cart is empty');
+                    return;
+                }
+                
+                if (!appData.currentUser) {
+                    showToast('Please login to complete your order');
+                    showPage('login');
+                    return;
+                }
+                
+                showPage('checkout');
+                loadCheckoutItems();
+                updateCheckoutProgress(1);
+            });
+            
+            // Logout buttons
+            elements.logoutButton.addEventListener('click', handleLogout);
+            elements.mobileLogoutButton.addEventListener('click', handleLogout);
+            elements.profileLogout.addEventListener('click', handleLogout);
+            
+            // Empty cart button
+            elements.emptyCartButton.addEventListener('click', () => {
+                showPage('menu');
+            });
+            
+            // Checkout navigation
+            document.getElementById('continue-to-info').addEventListener('click', () => {
+                updateCheckoutProgress(2);
+            });
+            
+            document.getElementById('back-to-cart').addEventListener('click', () => {
+                showPage('cart');
+            });
+            
+            document.getElementById('back-to-cart-review').addEventListener('click', () => {
+                updateCheckoutProgress(1);
+            });
+            
+            document.getElementById('continue-to-payment').addEventListener('click', () => {
+                updateCheckoutProgress(3);
+            });
+            
+            document.getElementById('back-to-info').addEventListener('click', () => {
+                updateCheckoutProgress(2);
+            });
+            
+            document.getElementById('complete-order').addEventListener('click', handleOrderCompletion);
+            
+            document.getElementById('back-to-home').addEventListener('click', () => {
+                showPage('home');
+            });
+            
+            // Payment method selection
+            elements.paymentMethods.forEach(method => {
+                method.addEventListener('click', () => {
+                    elements.paymentMethods.forEach(m => m.classList.remove('selected'));
+                    method.classList.add('selected');
+                    
+                    const paymentType = method.getAttribute('data-method');
+                    appData.paymentMethod = paymentType;
+                    
+                    if (paymentType === 'credit-card') {
+                        document.getElementById('credit-card-form').classList.remove('hidden');
+                        document.getElementById('paypal-form').classList.add('hidden');
+                    } else {
+                        document.getElementById('credit-card-form').classList.add('hidden');
+                        document.getElementById('paypal-form').classList.remove('hidden');
+                    }
+                });
+            });
+        }
+
+        // Toggle mobile menu
+        function toggleMobileMenu() {
+            elements.mobileMenu.classList.toggle('hidden');
+        }
+
+        // Show specific page
+        function showPage(pageId) {
+            // Hide all pages
+            elements.pages.forEach(page => {
+                page.classList.add('hidden');
+            });
+            
+            // Show requested page
+            document.getElementById(`${pageId}-page`).classList.remove('hidden');
+            
+            // If showing cart page, update it
+            if (pageId === 'cart') {
+                updateCart();
+            }
+            
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
+        // Load menu items
+        function loadMenuItems(category = 'all') {
+            // Clear menu container
+            elements.menuContainer.innerHTML = '';
+            
+            // Filter menu items by category
+            const filteredItems = category === 'all' 
+                ? appData.menuItems 
+                : appData.menuItems.filter(item => item.category === category);
+            
+            // Add items to menu
+            filteredItems.forEach(item => {
+                const restaurant = appData.restaurants.find(r => r.id === item.restaurantId);
+                
+                const itemElement = document.createElement('div');
+                itemElement.className = 'food-card bg-white rounded-xl shadow-md overflow-hidden';
+                itemElement.innerHTML = `
+                    <img src="${item.image}" alt="${item.name}" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-xl font-semibold">${item.name}</h3>
+                            <span class="text-orange-500 font-bold">$${item.price.toFixed(2)}</span>
+                        </div>
+                        <p class="text-gray-600 mb-2">${item.description}</p>
+                        <p class="text-gray-500 text-sm mb-4">From: ${restaurant.name}</p>
+                        <button class="button w-full add-to-cart" data-id="${item.id}">Add to Cart</button>
+                    </div>
+                `;
+                
+                elements.menuContainer.appendChild(itemElement);
+            });
+            
+            // Add event listeners to Add to Cart buttons
+            document.querySelectorAll('.add-to-cart').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const itemId = parseInt(e.target.getAttribute('data-id'));
+                    addToCart(itemId);
+                });
+            });
+        }
+
+        // Load restaurants
+        function loadRestaurants() {
+            // Clear restaurants container
+            elements.restaurantsContainer.innerHTML = '';
+            
+            // Add restaurants to page
+            appData.restaurants.forEach(restaurant => {
+                const restaurantElement = document.createElement('div');
+                restaurantElement.className = 'restaurant-card bg-white rounded-xl shadow-md overflow-hidden';
+                restaurantElement.innerHTML = `
+                    <img src="${restaurant.image}" alt="${restaurant.name}" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-xl font-semibold">${restaurant.name}</h3>
+                            <span class="flex items-center text-yellow-500">
+                                <i class="fas fa-star mr-1"></i>
+                                ${restaurant.rating}
+                            </span>
+                        </div>
+                        <p class="text-gray-600 mb-4">${restaurant.description}</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-500"><i class="fas fa-clock mr-1"></i> ${restaurant.deliveryTime}</span>
+                            <span class="text-gray-500"><i class="fas fa-dollar-sign mr-1"></i> ${restaurant.priceRange}</span>
+                        </div>
+                    </div>
+                `;
+                
+                elements.restaurantsContainer.appendChild(restaurantElement);
+            });
+        }
+
+        // Add item to cart
+        function addToCart(itemId) {
+            // Find the item
+            const item = appData.menuItems.find(i => i.id === itemId);
+            
+            if (!item) return;
+            
+            // Check if item is already in cart
+            const existingItem = appData.cart.find(i => i.id === itemId);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                appData.cart.push({
+                    ...item,
+                    quantity: 1
+                });
+            }
+            
+            // Update cart
+            updateCart();
+            
+            // Show success message
+            showToast(`${item.name} added to cart`);
+        }
+
+        // Update cart display
+        function updateCart() {
+            // Update cart count
+            const totalItems = appData.cart.reduce((total, item) => total + item.quantity, 0);
+            elements.cartCount.textContent = totalItems;
+            elements.mobileCartCount.textContent = totalItems;
+            
+            // Update cart items
+            elements.cartItems.innerHTML = '';
+            
+            if (appData.cart.length === 0) {
+                elements.cartItems.innerHTML = `
+                    <div class="p-6 text-center text-gray-500">
+                        <i class="fas fa-shopping-cart text-4xl mb-4"></i>
+                        <p>Your cart is empty</p>
+                        <button class="button mt-4" id="empty-cart-button">Browse Menu</button>
+                    </div>
+                `;
+                
+                // Add event listener to the new button
+                document.getElementById('empty-cart-button').addEventListener('click', () => {
+                    showPage('menu');
+                });
+                
+                // Disable checkout button
+                elements.checkoutButton.disabled = true;
+            } else {
+                appData.cart.forEach(item => {
+                    const itemElement = document.createElement('div');
+                    itemElement.className = 'cart-item p-6 border-b border-gray-200';
+                    itemElement.innerHTML = `
+                        <div class="flex justify-between items-start">
+                            <div class="flex items-center">
+                                <img src="${item.image}" alt="${item.name}" class="w-16 h-16 object-cover rounded">
+                                <div class="ml-4">
+                                    <h4 class="font-semibold">${item.name}</h4>
+                                    <p class="text-gray-600">$${item.price.toFixed(2)}</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center">
+                                <button class="text-gray-500 decrease-quantity" data-id="${item.id}">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <span class="mx-2">${item.quantity}</span>
+                                <button class="text-gray-500 increase-quantity" data-id="${item.id}">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center mt-2">
+                            <button class="text-red-500 remove-item" data-id="${item.id}">
+                                <i class="fas fa-trash mr-1"></i> Remove
+                            </button>
+                            <span class="font-semibold">$${(item.price * item.quantity).toFixed(2)}</span>
+                        </div>
+                    `;
+                    
+                    elements.cartItems.appendChild(itemElement);
+                });
+                
+                // Enable checkout button
+                elements.checkoutButton.disabled = false;
+            }
+            
+            // Update cart totals
+            updateCartTotals();
+            
+            // Add event listeners to cart buttons
+            document.querySelectorAll('.increase-quantity').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const itemId = parseInt(e.target.closest('button').getAttribute('data-id'));
+                    increaseQuantity(itemId);
+                });
+            });
+            
+            document.querySelectorAll('.decrease-quantity').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const itemId = parseInt(e.target.closest('button').getAttribute('data-id'));
+                    decreaseQuantity(itemId);
+                });
+            });
+            
+            document.querySelectorAll('.remove-item').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const itemId = parseInt(e.target.closest('button').getAttribute('data-id'));
+                    removeFromCart(itemId);
+                });
+            });
+        }
+
+        // Update cart totals
+        function updateCartTotals() {
+            // Calculate subtotal
+            const subtotal = appData.cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+            elements.cartSubtotal.textContent = `$${subtotal.toFixed(2)}`;
+            
+            // Calculate tax (8%)
+            const tax = subtotal * 0.08;
+            elements.taxAmount.textContent = `$${tax.toFixed(2)}`;
+            
+            // Calculate total (subtotal + tax + delivery fee)
+            const deliveryFee = 2.99;
+            const total = subtotal + tax + deliveryFee;
+            elements.cartTotal.textContent = `$${total.toFixed(2)}`;
+        }
+
+        // Increase item quantity
+        function increaseQuantity(itemId) {
+            const item = appData.cart.find(i => i.id === itemId);
+            
+            if (item) {
+                item.quantity += 1;
+                updateCart();
+            }
+        }
+
+        // Decrease item quantity
+        function decreaseQuantity(itemId) {
+            const item = appData.cart.find(i => i.id === itemId);
+            
+            if (item) {
+                item.quantity -= 1;
+                
+                // Remove item if quantity is 0
+                if (item.quantity === 0) {
+                    removeFromCart(itemId);
+                } else {
+                    updateCart();
+                }
+            }
+        }
+
+        // Remove item from cart
+        function removeFromCart(itemId) {
+            appData.cart = appData.cart.filter(item => item.id !== itemId);
+            updateCart();
+            
+            // Show message
+            const item = appData.menuItems.find(i => i.id === itemId);
+            if (item) {
+                showToast(`${item.name} removed from cart`);
+            }
+        }
+
+        // Handle login
+        function handleLogin(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            // Simple validation
+            if (!email || !password) {
+                showToast('Please enter both email and password');
+                return;
+            }
+            
+            // Simulate login process
+            showToast('Login successful!');
+            
+            // Set current user
+            appData.currentUser = {
+                email: email,
+                name: 'John Doe', // This would come from the server in a real app
+                phone: '+1 (123) 456-7890',
+                address: '123 Main St, City, State',
+                restaurant: 'Italian Bistro',
+                city: 'New York, NY'
+            };
+            
+            // Update UI for logged in user
+            updateAuthUI();
+            
+            // Redirect to home page
+            setTimeout(() => {
+                showPage('home');
+            }, 1500);
+        }
+
+        // Handle signup
+        function handleSignup(e) {
+            e.preventDefault();
+            
+            const firstName = document.getElementById('first-name').value;
+            const lastName = document.getElementById('last-name').value;
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            const restaurantName = document.getElementById('restaurant-name').value;
+            const city = document.getElementById('city').value;
+            const address = document.getElementById('address').value;
+            const phone = document.getElementById('phone').value;
+            
+            // Simple validation
+            if (!firstName || !lastName || !email || !password || !confirmPassword || !restaurantName || !city || !address || !phone) {
+                showToast('Please fill in all fields');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                showToast('Passwords do not match');
+                return;
+            }
+            
+            // Simulate signup process
+            showToast('Account created successfully!');
+            
+            // Set current user
+            appData.currentUser = {
+                email: email,
+                name: `${firstName} ${lastName}`,
+                phone: phone,
+                address: address,
+                restaurant: restaurantName,
+                city: city
+            };
+            
+            // Update UI for logged in user
+            updateAuthUI();
+            
+            // Redirect to home page
+            setTimeout(() => {
+                showPage('home');
+            }, 1500);
+        }
+
+        // Handle logout
+        function handleLogout() {
+            appData.currentUser = null;
+            showToast('You have been logged out');
+            
+            // Update UI for logged out user
+            updateAuthUI();
+            
+            // Redirect to home page
+            showPage('home');
+        }
+
+        // Check authentication status
+        function checkAuthStatus() {
+            // In a real app, this would check for a token in localStorage or a cookie
+            // For demo purposes, we'll just check if currentUser exists
+            if (appData.currentUser) {
+                updateAuthUI();
+            }
+        }
+
+        // Update UI based on authentication status
+        function updateAuthUI() {
+            if (appData.currentUser) {
+                // User is logged in
+                elements.authButtons.classList.add('hidden');
+                elements.profileLink.classList.remove('hidden');
+                elements.logoutButton.classList.remove('hidden');
+                elements.mobileAuthButtons.classList.add('hidden');
+                elements.mobileProfileLink.classList.remove('hidden');
+                elements.mobileLogoutButton.classList.remove('hidden');
+                
+                // Update profile page
+                updateProfile();
+            } else {
+                // User is logged out
+                elements.authButtons.classList.remove('hidden');
+                elements.profileLink.classList.add('hidden');
+                elements.logoutButton.classList.add('hidden');
+                elements.mobileAuthButtons.classList.remove('hidden');
+                elements.mobileProfileLink.classList.add('hidden');
+                elements.mobileLogoutButton.classList.add('hidden');
+            }
+        }
+
+        // Update profile page
+        function updateProfile() {
+            if (appData.currentUser) {
+                document.getElementById('profile-name').textContent = appData.currentUser.name;
+                document.getElementById('profile-email').textContent = appData.currentUser.email;
+                document.getElementById('profile-phone').textContent = appData.currentUser.phone;
+                document.getElementById('profile-address').textContent = appData.currentUser.address;
+                document.getElementById('profile-restaurant').textContent = appData.currentUser.restaurant;
+                document.getElementById('profile-city').textContent = appData.currentUser.city;
+            }
+        }
+
+        // Load checkout items
+        function loadCheckoutItems() {
+            elements.checkoutItems.innerHTML = '';
+            
+            if (appData.cart.length === 0) return;
+            
+            appData.cart.forEach(item => {
+                const itemElement = document.createElement('div');
+                itemElement.className = 'flex justify-between items-center mb-4';
+                itemElement.innerHTML = `
+                    <div class="flex items-center">
+                        <span class="bg-gray-200 rounded-full w-6 h-6 flex items-center justify-center mr-3">${item.quantity}</span>
+                        <span>${item.name}</span>
+                    </div>
+                    <span class="font-semibold">$${(item.price * item.quantity).toFixed(2)}</span>
+                `;
+                
+                elements.checkoutItems.appendChild(itemElement);
+            });
+            
+            // Update checkout total
+            const subtotal = appData.cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+            const tax = subtotal * 0.08;
+            const deliveryFee = 2.99;
+            const total = subtotal + tax + deliveryFee;
+            elements.checkoutTotal.textContent = `$${total.toFixed(2)}`;
+        }
+
+        // Update checkout progress
+        function updateCheckoutProgress(step) {
+            // Hide all steps
+            elements.checkoutSteps.forEach(step => {
+                step.classList.add('hidden');
+            });
+            
+            // Show current step
+            document.getElementById(`checkout-step-${step}`).classList.remove('hidden');
+            
+            // Update progress indicator
+            document.querySelectorAll('.step').forEach((s, index) => {
+                if (index + 1 < step) {
+                    s.classList.remove('active');
+                    s.classList.add('completed');
+                } else if (index + 1 === step) {
+                    s.classList.add('active');
+                    s.classList.remove('completed');
+                } else {
+                    s.classList.remove('active', 'completed');
+                }
+            });
+            
+            appData.currentCheckoutStep = step;
+        }
+
+        // Handle order completion
+        function handleOrderCompletion() {
+            // Simulate order processing
+            showToast('Order placed successfully!');
+            
+            // Update checkout progress
+            updateCheckoutProgress(4);
+            
+            // Clear cart
+            appData.cart = [];
+            updateCart();
+        }
+
+        // Show toast message
+        function showToast(message) {
+            elements.toastMessage.textContent = message;
+            elements.toast.classList.add('show');
+            
+            // Hide toast after 3 seconds
+            setTimeout(() => {
+                elements.toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Initialize the app when the DOM is loaded
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
