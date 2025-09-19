@@ -71,8 +71,3 @@ Steps to contribute:
 4. Push and make a Pull Request  
 
 ---
-
-## ▶️ How to Use
-1. First, download the project or clone it using Git:
-   ```bash
-   git clone https://github.com/isinghranjeet/Food-Dilivery-App.git
